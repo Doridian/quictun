@@ -54,8 +54,8 @@ func runLocalDialer() error {
 	for {
 		conn, err = net.Dial("tcp", *localTunAddr)
 		if err != nil {
-			log.Println("Dial failed, retrying in 10ms: %v", err)
-			time.Sleep(10 * time.Millisecond)
+			log.Printf("Dial failed, retrying in 100ms: %v", err)
+			time.Sleep(100 * time.Millisecond)
 			continue
 		}
 		break
