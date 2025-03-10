@@ -90,7 +90,6 @@ func handleEndpointConn(conn net.Conn) error {
 	log.Println("Got conn, copying...")
 
 	var errChan = make(chan error, 2)
-	defer close(errChan)
 	go func() {
 		_, goErr := io.Copy(quicStream, conn)
 		errChan <- goErr

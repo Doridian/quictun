@@ -4,9 +4,20 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"os/signal"
 )
 
 var bgCommands = []*exec.Cmd{}
+
+func init() {
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(sigChan, os.Interrupt)
+	go func() {
+		for range sigChan {
+			closeProgram()
+		}
+	}()
+}
 
 func addBGCommand(cmd *exec.Cmd) {
 	bgCommands = append(bgCommands, cmd)
