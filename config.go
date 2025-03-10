@@ -15,8 +15,7 @@ type Config struct {
 	Certificate string `json:"certificate"`
 	PublicKey   string `json:"public_key"`
 
-	QUICPort  int `json:"quic_port"`
-	LocalPort int `json:"local_port"`
+	QUICPort int `json:"quic_port"`
 }
 
 func readRemoteConfig(r io.ReadCloser) error {

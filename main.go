@@ -11,8 +11,10 @@ import (
 
 var remoteAddr = flag.String("remote-addr", "remote.example.com", "Remote to open tunnel with")
 var quicPort = flag.Int("quic-port", 1234, "Port to connect tunnel with")
-var localPort = flag.Int("local-port", 1235, "Local port to bind tunnel to")
 var gitVersion = flag.Bool("git-version", false, "Use git rev-parse to send ref to remote")
+
+var localTunAddr = flag.String("local-tunnel-addr", ":1235", ":PORT for listener, otherwise connect IP:PORT")
+var remoteTunAddr = flag.String("remote-tunnel-addr", ":1235", ":PORT for listener, otherwise connect IP:PORT")
 
 func main() {
 	flag.Parse()
@@ -40,9 +42,12 @@ func main() {
 	}
 
 	cfg.QUICPort = *quicPort
-	cfg.LocalPort = *localPort
 
-	var err error
+	err := runLocalEndpoint()
+	if err != nil {
+		log.Fatalln(err)
+	}
+
 	if *remoteAddr == ":" {
 		log.SetPrefix("server: ")
 		err = runServer()

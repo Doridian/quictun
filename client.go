@@ -32,7 +32,7 @@ func mainRemoteListener() error {
 
 func runRemoteListener() (*exec.Cmd, error) {
 	sshCmd := &exec.Cmd{}
-	sshCmd.Args = []string{"/usr/bin/ssh", *remoteAddr, "--", "go", "run", "github.com/Doridian/quictun@" + VERSION, "-remote-addr", ":", "-quic-port", strconv.Itoa(*quicPort), "-local-port", strconv.Itoa(*localPort)}
+	sshCmd.Args = []string{"/usr/bin/ssh", *remoteAddr, "--", "go", "run", "github.com/Doridian/quictun@" + VERSION, "-remote-addr", ":", "-quic-port", strconv.Itoa(*quicPort), "-local-tunnel-addr", *remoteTunAddr}
 	sshCmd.Path = sshCmd.Args[0]
 
 	stdin, err := sshCmd.StdinPipe()
