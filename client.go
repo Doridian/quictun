@@ -82,12 +82,12 @@ func generateClientTLSConfig() (*tls.Config, error) {
 }
 
 func runClient() error {
-	err := mainRemoteListener()
+	tlsConf, err := generateClientTLSConfig()
 	if err != nil {
 		return err
 	}
 
-	tlsConf, err := generateClientTLSConfig()
+	err = mainRemoteListener()
 	if err != nil {
 		return err
 	}

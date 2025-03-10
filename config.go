@@ -8,8 +8,8 @@ import (
 
 var VERSION = "main"
 
-var cfg = &Config{}
-var remoteCfg = &Config{}
+var cfg Config
+var remoteCfg Config
 
 type Config struct {
 	Certificate []byte `json:"certificate"`
@@ -21,7 +21,7 @@ func readRemoteConfig(r io.ReadCloser) error {
 	defer r.Close()
 
 	unmarshaler := json.NewDecoder(r)
-	return unmarshaler.Decode(remoteCfg)
+	return unmarshaler.Decode(&remoteCfg)
 }
 
 func writeConfig(w io.WriteCloser) error {
