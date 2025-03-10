@@ -13,7 +13,10 @@ var remoteCfg = &Config{}
 
 type Config struct {
 	Certificate string `json:"certificate"`
-	Key         string `json:"key"`
+	PublicKey   string `json:"public_key"`
+
+	QUICPort  int `json:"quic_port"`
+	LocalPort int `json:"local_port"`
 }
 
 func readRemoteConfig(r io.ReadCloser) error {
