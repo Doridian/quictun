@@ -8,6 +8,7 @@ import (
 	"crypto/x509"
 	"encoding/pem"
 	"errors"
+	"log"
 	"math/big"
 	"time"
 )
@@ -59,7 +60,8 @@ func verifyRemoteCert(rawCerts [][]byte, verifiedChains [][]*x509.Certificate) e
 			return err
 		}
 		if cert.Equal(remoteExpected) {
-			return errors.New("Found!")
+			log.Printf("Peer cert found!")
+			return nil
 		}
 	}
 
