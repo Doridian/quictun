@@ -59,7 +59,7 @@ func verifyRemoteCert(rawCerts [][]byte, verifiedChains [][]*x509.Certificate) e
 			return err
 		}
 		if cert.Equal(remoteExpected) {
-			return nil
+			return errors.New("Found!")
 		}
 	}
 
