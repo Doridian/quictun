@@ -90,10 +90,12 @@ func runRemoteListener() (*exec.Cmd, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer stdin.Close()
 	stdout, err := sshCmd.StdoutPipe()
 	if err != nil {
 		return nil, err
 	}
+	defer stdout.Close()
 	sshCmd.Stderr = os.Stderr
 
 	log.Println("Starting SSH command")
