@@ -9,6 +9,7 @@ import (
 	"encoding/pem"
 	"fmt"
 	"math/big"
+	"time"
 )
 
 func generateCert() (tls.Certificate, error) {
@@ -16,7 +17,11 @@ func generateCert() (tls.Certificate, error) {
 	if err != nil {
 		return tls.Certificate{}, err
 	}
-	template := x509.Certificate{SerialNumber: big.NewInt(1)}
+	template := x509.Certificate{
+		SerialNumber: big.NewInt(1),
+		NotBefore:    time.Now().Add(-time.Minute),
+		NotAfter:     time.Now().Add(time.Minute),
+	}
 	certDER, err := x509.CreateCertificate(rand.Reader, &template, &template, &key.PublicKey, key)
 	if err != nil {
 		return tls.Certificate{}, err
