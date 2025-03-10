@@ -19,8 +19,8 @@ func generateCert() (tls.Certificate, error) {
 	}
 	template := x509.Certificate{
 		SerialNumber: big.NewInt(1),
-		NotBefore:    time.Now().Add(-time.Minute),
-		NotAfter:     time.Now().Add(time.Minute),
+		NotBefore:    time.Now().Add(-time.Hour),
+		NotAfter:     time.Now().Add(time.Hour),
 	}
 	certDER, err := x509.CreateCertificate(rand.Reader, &template, &template, &key.PublicKey, key)
 	if err != nil {
