@@ -62,12 +62,14 @@ func verifyRemoteCert(rawCerts [][]byte, verifiedChains [][]*x509.Certificate) e
 			return nil
 		}
 	}
+
 	return errors.New("no matching certificate found")
 }
 
 func CommonTLSConfig() *tls.Config {
 	return &tls.Config{
-		ClientAuth:            tls.RequireAndVerifyClientCert,
+		ClientAuth:            tls.RequireAnyClientCert,
+		InsecureSkipVerify:    true,
 		VerifyPeerCertificate: verifyRemoteCert,
 		NextProtos:            []string{"quictun"},
 		ServerName:            "quictun",
