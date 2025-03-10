@@ -25,6 +25,8 @@ func main() {
 		log.SetPrefix("client: ")
 	}
 
+	log.Printf("Embedded version: %s", VERSION)
+
 	if *gitVersion {
 		gitCmd := exec.Command("git", "rev-parse", "HEAD")
 		gitCmd.Stderr = os.Stderr
@@ -46,6 +48,8 @@ func main() {
 		}
 		VERSION = strings.Trim(string(data), " \r\n\t")
 	}
+
+	log.Printf("Used version: %s", VERSION)
 
 	cfg.QUICPort = *quicPort
 
