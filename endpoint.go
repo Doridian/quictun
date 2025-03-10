@@ -7,6 +7,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/quic-go/quic-go"
 )
@@ -75,6 +76,10 @@ func runOneConnection(listener net.Listener) error {
 
 func handleEndpointConn(conn net.Conn) error {
 	defer conn.Close()
+
+	for quicStream == nil {
+		time.Sleep(10 * time.Millisecond)
+	}
 
 	var errChan = make(chan error, 2)
 	defer close(errChan)
