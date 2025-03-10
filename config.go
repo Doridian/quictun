@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"io"
 	"log"
-	"os"
 )
 
 var VERSION = "main"
@@ -18,7 +17,7 @@ type Config struct {
 }
 
 func readRemoteConfig(r io.Reader) error {
-	data, err := io.ReadAll(os.Stdin)
+	data, err := io.ReadAll(r)
 	if err != nil {
 		return err
 	}
