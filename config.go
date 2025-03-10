@@ -12,7 +12,7 @@ var cfg = &Config{}
 var remoteCfg = &Config{}
 
 type Config struct {
-	Certificate string `json:"certificate"`
+	Certificate []byte `json:"certificate"`
 
 	QUICPort int `json:"quic_port"`
 }

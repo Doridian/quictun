@@ -17,12 +17,9 @@ func generateServerTLSConfig() (*tls.Config, error) {
 		return nil, err
 	}
 
-	return &tls.Config{
-		ClientAuth:           tls.RequireAndVerifyClientCert,
-		GetCertificate:       fixedCertGetter[*tls.ClientHelloInfo](tlsCert),
-		GetClientCertificate: getRemoteCertificate[*tls.CertificateRequestInfo],
-		NextProtos:           []string{"quictun"},
-	}, nil
+	tlsConfig := CommonTLSConfig()
+	tlsConfig.GetCertificate = fixedCertGetter[*tls.ClientHelloInfo](tlsCert)
+	return tlsConfig, nil
 }
 
 func runServer() error {

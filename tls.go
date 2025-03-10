@@ -7,7 +7,7 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"encoding/pem"
-	"fmt"
+	"errors"
 	"math/big"
 	"time"
 )
@@ -36,7 +36,7 @@ func generateCert() (tls.Certificate, error) {
 	keyPEM := pem.EncodeToMemory(&pem.Block{Type: "ECDSA PRIVATE KEY", Bytes: keyBytes})
 
 	certPEM := pem.EncodeToMemory(&pem.Block{Type: "CERTIFICATE", Bytes: certDER})
-	cfg.Certificate = string(certPEM)
+	cfg.Certificate = certDER
 
 	return tls.X509KeyPair(certPEM, keyPEM)
 }
@@ -47,10 +47,29 @@ func fixedCertGetter[T interface{}](cert tls.Certificate) func(T) (*tls.Certific
 	}
 }
 
-func getRemoteCertificate[T interface{}](T) (*tls.Certificate, error) {
-	cert, _ := pem.Decode([]byte(remoteCfg.Certificate))
-	if cert == nil {
-		return nil, fmt.Errorf("Failed to decode certificate")
+func verifyRemoteCert(rawCerts [][]byte, verifiedChains [][]*x509.Certificate) error {
+	remoteExpected, err := x509.ParseCertificate(remoteCfg.Certificate)
+	if err != nil {
+		return err
 	}
-	return &tls.Certificate{Certificate: [][]byte{cert.Bytes}}, nil
+
+	for _, rawCert := range rawCerts {
+		cert, err := x509.ParseCertificate(rawCert)
+		if err != nil {
+			return err
+		}
+		if cert.Equal(remoteExpected) {
+			return nil
+		}
+	}
+	return errors.New("no matching certificate found")
+}
+
+func CommonTLSConfig() *tls.Config {
+	return &tls.Config{
+		ClientAuth:            tls.RequireAndVerifyClientCert,
+		VerifyPeerCertificate: verifyRemoteCert,
+		NextProtos:            []string{"quictun"},
+		ServerName:            "quictun",
+	}
 }
