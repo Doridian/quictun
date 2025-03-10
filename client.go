@@ -83,6 +83,7 @@ func runClient() error {
 	if err != nil {
 		return err
 	}
+	quicStream = stream
 	defer stream.Close()
 
 	log.Printf("Stream open!")
