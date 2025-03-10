@@ -71,7 +71,7 @@ func runServer() error {
 
 	stream, err := conn.AcceptStream(context.Background())
 	if err != nil {
-		panic(err)
+		return err
 	}
 	defer stream.Close()
 
