@@ -63,11 +63,6 @@ func runOneConnection(listener net.Listener) error {
 	return handleEndpointConn(conn)
 }
 
-func ioCopyWithClose(dst io.WriteCloser, src io.ReadCloser) error {
-	_, err := io.Copy(dst, src)
-	return err
-}
-
 func handleEndpointConn(conn net.Conn) error {
 	defer conn.Close()
 
