@@ -46,7 +46,7 @@ func main() {
 	}
 
 	var err error
-	if *remoteAddr == "" {
+	if *remoteAddr == ":" {
 		log.SetPrefix("server: ")
 		err = runServer()
 	} else {
@@ -83,7 +83,7 @@ func mainRemoteListener() error {
 
 func runRemoteListener() (*exec.Cmd, error) {
 	sshCmd := &exec.Cmd{}
-	sshCmd.Args = []string{"/usr/bin/ssh", *remoteAddr, "--", "go", "run", "github.com/Doridian/quictun@" + VERSION, "-remote-addr", "", "-remote-port", strconv.Itoa(*remotePort), "-bind-port", strconv.Itoa(*boundPort)}
+	sshCmd.Args = []string{"/usr/bin/ssh", *remoteAddr, "--", "go", "run", "github.com/Doridian/quictun@" + VERSION, "-remote-addr", ":", "-remote-port", strconv.Itoa(*remotePort), "-bind-port", strconv.Itoa(*boundPort)}
 	sshCmd.Path = sshCmd.Args[0]
 
 	stdin, err := sshCmd.StdinPipe()
