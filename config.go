@@ -19,12 +19,8 @@ type Config struct {
 func readRemoteConfig(r io.ReadCloser) error {
 	defer r.Close()
 
-	data, err := io.ReadAll(r)
-	if err != nil {
-		return err
-	}
-
-	return json.Unmarshal(data, remoteCfg)
+	unmarshaler := json.NewDecoder(r)
+	return unmarshaler.Decode(remoteCfg)
 }
 
 func writeConfig(w io.WriteCloser) error {
