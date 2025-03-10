@@ -28,16 +28,16 @@ func runServer() error {
 		return err
 	}
 
-	err = configLoop(os.Stdin, os.Stdout)
-	if err != nil {
-		return err
-	}
-
 	listener, err := quic.ListenAddr(fmt.Sprintf(":%d", cfg.QUICPort), tlsConfig, nil)
 	if err != nil {
 		return err
 	}
 	defer listener.Close()
+
+	err = configLoop(os.Stdin, os.Stdout)
+	if err != nil {
+		return err
+	}
 
 	conn, err := listener.Accept(context.Background())
 	if err != nil {
