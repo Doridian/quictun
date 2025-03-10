@@ -70,7 +70,7 @@ func verifyRemoteCert(rawCerts [][]byte, verifiedChains [][]*x509.Certificate) e
 
 func CommonTLSConfig() *tls.Config {
 	return &tls.Config{
-		ClientAuth:            tls.RequireAnyClientCert,
+		ClientAuth:            tls.RequireAndVerifyClientCert,
 		InsecureSkipVerify:    true,
 		VerifyPeerCertificate: verifyRemoteCert,
 		NextProtos:            []string{"quictun"},
