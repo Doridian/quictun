@@ -19,6 +19,12 @@ var remoteTunAddr = flag.String("remote-tunnel-addr", ":1235", ":PORT for listen
 func main() {
 	flag.Parse()
 
+	if *remoteAddr == ":" {
+		log.SetPrefix("server: ")
+	} else {
+		log.SetPrefix("client: ")
+	}
+
 	if *gitVersion {
 		gitCmd := exec.Command("git", "rev-parse", "HEAD")
 		gitCmd.Stderr = os.Stderr
@@ -49,10 +55,8 @@ func main() {
 	}
 
 	if *remoteAddr == ":" {
-		log.SetPrefix("server: ")
 		err = runServer()
 	} else {
-		log.SetPrefix("client: ")
 		err = runClient()
 	}
 	log.Println("main done")
