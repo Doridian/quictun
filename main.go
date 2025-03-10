@@ -32,19 +32,19 @@ func main() {
 		gitCmd.Stderr = os.Stderr
 		stdout, err := gitCmd.StdoutPipe()
 		if err != nil {
-			log.Fatalln(err)
+			fatalProgram(err)
 		}
 		err = gitCmd.Start()
 		if err != nil {
-			log.Fatalln(err)
+			fatalProgram(err)
 		}
 		data, err := io.ReadAll(stdout)
 		if err != nil {
-			log.Fatalln(err)
+			fatalProgram(err)
 		}
 		err = gitCmd.Wait()
 		if err != nil {
-			log.Fatalln(err)
+			fatalProgram(err)
 		}
 		VERSION = strings.Trim(string(data), " \r\n\t")
 	}
@@ -55,7 +55,7 @@ func main() {
 
 	err := runLocalEndpoint()
 	if err != nil {
-		log.Fatalln(err)
+		fatalProgram(err)
 	}
 
 	if *remoteAddr == ":" {
@@ -65,7 +65,7 @@ func main() {
 	}
 	log.Println("main done")
 	if err != nil {
-		log.Fatalln(err)
+		fatalProgram(err)
 	}
-	os.Exit(0)
+	closeProgram()
 }

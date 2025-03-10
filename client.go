@@ -23,9 +23,9 @@ func mainRemoteListener() error {
 		goErr := sshCmd.Wait()
 		log.Println("mainRemoteListener done")
 		if goErr != nil {
-			log.Fatalln(goErr)
+			fatalProgram(goErr)
 		}
-		os.Exit(0)
+		closeProgram()
 	}()
 
 	return nil

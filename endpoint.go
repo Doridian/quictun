@@ -4,7 +4,6 @@ import (
 	"io"
 	"log"
 	"net"
-	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -40,9 +39,9 @@ func runLocalListener() error {
 		goErr := runOneConnection(listener)
 		log.Println("runLocalListener done")
 		if goErr != nil {
-			log.Fatalln(goErr)
+			fatalProgram(goErr)
 		}
-		os.Exit(0)
+		closeProgram()
 	}()
 
 	return nil
@@ -65,9 +64,9 @@ func runLocalDialer() error {
 		goErr := handleEndpointConn(conn)
 		log.Println("runLocalDialer done")
 		if goErr != nil {
-			log.Fatalln(goErr)
+			fatalProgram(goErr)
 		}
-		os.Exit(0)
+		closeProgram()
 	}()
 
 	return nil
