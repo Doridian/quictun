@@ -63,16 +63,31 @@ func runRemoteListener() (*exec.Cmd, error) {
 	return sshCmd, nil
 }
 
-func runClient() error {
+func generateClientTLSConfig() (*tls.Config, error) {
+	tlsClientCert, err := generateCert()
+	if err != nil {
+		return nil, err
+	}
+
+	return &tls.Config{
+		ClientAuth:           tls.RequireAndVerifyClientCert,
+		GetCertificate:       getRemoteCertificate[*tls.ClientHelloInfo],
+		GetClientCertificate: fixedCertGetter[*tls.CertificateRequestInfo](tlsClientCert),
+		NextProtos:           []string{"quictun"},
+	}, nil
+}
+
+func runClient(tlsConfig *tls.Config) error {
 	err := mainRemoteListener()
 	if err != nil {
 		return err
 	}
 
-	tlsConf := &tls.Config{
-		InsecureSkipVerify: true,
-		NextProtos:         []string{"quictun"},
+	tlsConf, err := generateClientTLSConfig()
+	if err != nil {
+		return err
 	}
+
 	conn, err := quic.DialAddr(context.Background(), fmt.Sprintf("[%s]:%d", *remoteAddr, remoteCfg.QUICPort), tlsConf, nil)
 	if err != nil {
 		return err

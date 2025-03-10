@@ -2,55 +2,31 @@ package main
 
 import (
 	"context"
-	"crypto/ecdsa"
-	"crypto/elliptic"
-	"crypto/rand"
 	"crypto/tls"
-	"crypto/x509"
-	"encoding/pem"
 	"fmt"
 	"log"
-	"math/big"
 	"os"
 	"time"
 
 	"github.com/quic-go/quic-go"
 )
 
-func generateTLSConfig() (*tls.Config, error) {
-	key, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+func generateServerTLSConfig() (*tls.Config, error) {
+	tlsCert, err := generateCert()
 	if err != nil {
 		return nil, err
-	}
-	template := x509.Certificate{SerialNumber: big.NewInt(1)}
-	certDER, err := x509.CreateCertificate(rand.Reader, &template, &template, &key.PublicKey, key)
-	if err != nil {
-		return nil, err
-	}
-
-	keyBytes, err := x509.MarshalECPrivateKey(key)
-	if err != nil {
-		return nil, err
-	}
-
-	keyPEM := pem.EncodeToMemory(&pem.Block{Type: "ECDSA PRIVATE KEY", Bytes: keyBytes})
-
-	certPEM := pem.EncodeToMemory(&pem.Block{Type: "CERTIFICATE", Bytes: certDER})
-	cfg.Certificate = string(certPEM)
-
-	tlsCert, err := tls.X509KeyPair(certPEM, keyPEM)
-	if err != nil {
-		panic(err)
 	}
 
 	return &tls.Config{
-		Certificates: []tls.Certificate{tlsCert},
-		NextProtos:   []string{"quictun"},
+		ClientAuth:           tls.RequireAndVerifyClientCert,
+		GetCertificate:       fixedCertGetter[*tls.ClientHelloInfo](tlsCert),
+		GetClientCertificate: getRemoteCertificate[*tls.CertificateRequestInfo],
+		NextProtos:           []string{"quictun"},
 	}, nil
 }
 
 func runServer() error {
-	tlsConfig, err := generateTLSConfig()
+	tlsConfig, err := generateServerTLSConfig()
 	if err != nil {
 		return err
 	}
