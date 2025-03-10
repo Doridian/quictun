@@ -51,6 +51,7 @@ func fixedCertGetter[T interface{}](cert tls.Certificate) func(T) (*tls.Certific
 func verifyRemoteCert(rawCerts [][]byte, verifiedChains [][]*x509.Certificate) error {
 	remoteExpected, err := x509.ParseCertificate(remoteCfg.Certificate)
 	if err != nil {
+		log.Printf("Failed to parse remote certificate: %v", err)
 		return err
 	}
 
