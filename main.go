@@ -114,7 +114,7 @@ func runRemoteListener() (*exec.Cmd, error) {
 }
 
 func runServer() error {
-	err := configLoop(os.Stdout, os.Stdin)
+	err := configLoop(os.Stdin, os.Stdout)
 	if err != nil {
 		return err
 	}
