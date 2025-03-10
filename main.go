@@ -7,6 +7,8 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+	"syscall"
+	"time"
 )
 
 var remoteAddr = flag.String("remote-addr", "remote.example.com", "Remote to open tunnel with")
@@ -15,6 +17,8 @@ var gitVersion = flag.Bool("git-version", false, "Use git rev-parse to send ref 
 
 var localTunAddr = flag.String("local-tunnel-addr", ":1235", ":PORT for listener, otherwise connect IP:PORT")
 var remoteTunAddr = flag.String("remote-tunnel-addr", ":1235", ":PORT for listener, otherwise connect IP:PORT")
+
+var sigcontPid = flag.Int("sigcont-pid", 0, "PID to send SIGCONT to")
 
 func main() {
 	flag.Parse()
@@ -68,4 +72,18 @@ func main() {
 		fatalProgram(err)
 	}
 	closeProgram()
+}
+
+func sendSigcontLoop() {
+	if *sigcontPid != 0 {
+		err := syscall.Kill(*sigcontPid, syscall.SIGCONT)
+		if err != nil {
+			log.Printf("Failed to send SIGCONT to %d: %v", *sigcontPid, err)
+		}
+	}
+
+	log.Printf("Stream open!")
+	for {
+		time.Sleep(1 * time.Second)
+	}
 }

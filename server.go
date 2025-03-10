@@ -4,9 +4,7 @@ import (
 	"context"
 	"crypto/tls"
 	"fmt"
-	"log"
 	"os"
-	"time"
 
 	"github.com/quic-go/quic-go"
 )
@@ -51,8 +49,6 @@ func runServer() error {
 	quicStream = stream
 	defer stream.Close()
 
-	log.Printf("Stream open!")
-	for {
-		time.Sleep(1 * time.Second)
-	}
+	sendSigcontLoop()
+	return nil
 }
