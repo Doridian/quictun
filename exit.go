@@ -30,6 +30,8 @@ func killAllBGCommands() {
 		log.Printf("Killing command: %v (res %v)", cmd,
 			cmd.Process.Kill())
 	}
+
+	sendSigcont()
 }
 
 func closeProgram() {
