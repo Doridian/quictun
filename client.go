@@ -71,7 +71,13 @@ func runRemoteListener() (*exec.Cmd, error) {
 }
 
 func generateClientTLSConfig() (*tls.Config, error) {
+	tlsClientCert, err := generateCert()
+	if err != nil {
+		return nil, err
+	}
+
 	tlsConfig := CommonTLSConfig()
+	tlsConfig.GetClientCertificate = fixedCertGetter[*tls.CertificateRequestInfo](tlsClientCert)
 	return tlsConfig, nil
 }
 
