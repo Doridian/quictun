@@ -16,7 +16,9 @@ type Config struct {
 	Key         string `json:"key"`
 }
 
-func readRemoteConfig(r io.Reader) error {
+func readRemoteConfig(r io.ReadCloser) error {
+	defer r.Close()
+
 	data, err := io.ReadAll(r)
 	if err != nil {
 		return err
@@ -25,12 +27,14 @@ func readRemoteConfig(r io.Reader) error {
 	return json.Unmarshal(data, remoteCfg)
 }
 
-func writeConfig(w io.Writer) error {
+func writeConfig(w io.WriteCloser) error {
+	defer w.Close()
+
 	marshaler := json.NewEncoder(w)
 	return marshaler.Encode(cfg)
 }
 
-func configLoop(r io.Reader, w io.Writer) error {
+func configLoop(r io.ReadCloser, w io.WriteCloser) error {
 	log.Println("Writing local config")
 
 	err := writeConfig(w)
