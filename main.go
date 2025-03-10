@@ -47,8 +47,10 @@ func main() {
 
 	var err error
 	if *remoteAddr == "" {
+		log.SetPrefix("server: ")
 		err = runServer()
 	} else {
+		log.SetPrefix("client: ")
 		err = mainRemoteListener()
 		if err == nil {
 			err = runClient()
@@ -81,7 +83,7 @@ func mainRemoteListener() error {
 
 func runRemoteListener() (*exec.Cmd, error) {
 	sshCmd := &exec.Cmd{}
-	sshCmd.Args = []string{"/usr/bin/ssh", *remoteAddr, "go", "run", "github.com/Doridian/quictun@" + VERSION, "-remote-addr", "", "-remote-port", strconv.Itoa(*remotePort), "-bind-port", strconv.Itoa(*boundPort)}
+	sshCmd.Args = []string{"/usr/bin/ssh", *remoteAddr, "--", "go", "run", "github.com/Doridian/quictun@" + VERSION, "-remote-addr", "", "-remote-port", strconv.Itoa(*remotePort), "-bind-port", strconv.Itoa(*boundPort)}
 	sshCmd.Path = sshCmd.Args[0]
 
 	stdin, err := sshCmd.StdinPipe()
@@ -94,17 +96,14 @@ func runRemoteListener() (*exec.Cmd, error) {
 	}
 	sshCmd.Stderr = os.Stderr
 
+	log.Println("Starting SSH command")
+
 	err = sshCmd.Start()
 	if err != nil {
 		return nil, err
 	}
 
-	err = writeConfig(stdin)
-	if err != nil {
-		return nil, err
-	}
-
-	err = readRemoteConfig(stdout)
+	err = configLoop(stdout, stdin)
 	if err != nil {
 		return nil, err
 	}
@@ -113,12 +112,7 @@ func runRemoteListener() (*exec.Cmd, error) {
 }
 
 func runServer() error {
-	err := writeConfig(os.Stdout)
-	if err != nil {
-		return err
-	}
-
-	err = readRemoteConfig(os.Stdin)
+	err := configLoop(os.Stdout, os.Stdin)
 	if err != nil {
 		return err
 	}
