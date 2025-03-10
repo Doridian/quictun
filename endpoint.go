@@ -11,7 +11,7 @@ import (
 	"github.com/quic-go/quic-go"
 )
 
-var stream quic.Stream
+var quicStream quic.Stream
 
 func runLocalEndpoint() error {
 	if strings.HasPrefix(*localTunAddr, ":") {
@@ -52,7 +52,17 @@ func runLocalDialer() error {
 	if err != nil {
 		return err
 	}
-	return handleEndpointConn(conn)
+
+	go func() {
+		goErr := handleEndpointConn(conn)
+		log.Println("runLocalDialer done")
+		if goErr != nil {
+			log.Fatalln(goErr)
+		}
+		os.Exit(0)
+	}()
+
+	return nil
 }
 
 func runOneConnection(listener net.Listener) error {
@@ -69,11 +79,11 @@ func handleEndpointConn(conn net.Conn) error {
 	var errChan = make(chan error, 2)
 	defer close(errChan)
 	go func() {
-		_, goErr := io.Copy(stream, conn)
+		_, goErr := io.Copy(quicStream, conn)
 		errChan <- goErr
 	}()
 	go func() {
-		_, err := io.Copy(conn, stream)
+		_, err := io.Copy(conn, quicStream)
 		errChan <- err
 	}()
 

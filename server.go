@@ -9,8 +9,10 @@ import (
 	"crypto/x509"
 	"encoding/pem"
 	"fmt"
+	"log"
 	"math/big"
 	"os"
+	"time"
 
 	"github.com/quic-go/quic-go"
 )
@@ -75,5 +77,8 @@ func runServer() error {
 	}
 	defer stream.Close()
 
-	return err
+	log.Printf("Stream open!")
+	for {
+		time.Sleep(1 * time.Second)
+	}
 }
