@@ -81,6 +81,8 @@ func handleEndpointConn(conn net.Conn) error {
 		time.Sleep(10 * time.Millisecond)
 	}
 
+	log.Println("Got conn, copying...")
+
 	var errChan = make(chan error, 2)
 	defer close(errChan)
 	go func() {
