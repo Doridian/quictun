@@ -13,6 +13,7 @@ import (
 var remoteAddr = flag.String("remote-addr", "remote.example.com", "Remote to open tunnel with")
 var quicPort = flag.Int("quic-port", 1234, "Port to connect tunnel with")
 var gitVersion = flag.Bool("git-version", false, "Use git rev-parse to send ref to remote")
+var useBinary = flag.String("use-binary", "", "Use a specific binary for the remote (instead of \"go run\")")
 
 var localTunAddr = flag.String("local-tunnel-addr", ":1235", ":PORT for listener, otherwise connect IP:PORT")
 var remoteTunAddr = flag.String("remote-tunnel-addr", ":1235", ":PORT for listener, otherwise connect IP:PORT")
