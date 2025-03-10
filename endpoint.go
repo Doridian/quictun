@@ -48,23 +48,26 @@ func runLocalListener() error {
 }
 
 func runLocalDialer() error {
-	var conn net.Conn
-	var err error
-	for {
-		conn, err = net.Dial("tcp", *localTunAddr)
-		if err != nil {
-			log.Printf("Dial failed, retrying in 100ms: %v", err)
-			time.Sleep(100 * time.Millisecond)
-			continue
-		}
-		break
-	}
+	localTunStr := *localTunAddr
 
 	go func() {
-		goErr := handleEndpointConn(conn)
+		var conn net.Conn
+		var err error
+
+		for {
+			conn, err = net.Dial("tcp", localTunStr)
+			if err != nil {
+				log.Printf("Dial failed, retrying in 1s: %v", err)
+				time.Sleep(1 * time.Second)
+				continue
+			}
+			break
+		}
+
+		err = handleEndpointConn(conn)
 		log.Println("runLocalDialer done")
-		if goErr != nil {
-			fatalProgram(goErr)
+		if err != nil {
+			fatalProgram(err)
 		}
 		closeProgram()
 	}()
