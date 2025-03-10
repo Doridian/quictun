@@ -77,7 +77,7 @@ func generateClientTLSConfig() (*tls.Config, error) {
 	}, nil
 }
 
-func runClient(tlsConfig *tls.Config) error {
+func runClient() error {
 	err := mainRemoteListener()
 	if err != nil {
 		return err
