@@ -74,6 +74,7 @@ func generateClientTLSConfig() (*tls.Config, error) {
 		GetCertificate:       getRemoteCertificate[*tls.ClientHelloInfo],
 		GetClientCertificate: fixedCertGetter[*tls.CertificateRequestInfo](tlsClientCert),
 		NextProtos:           []string{"quictun"},
+		ServerName:           "quictun",
 	}, nil
 }
 

@@ -21,6 +21,7 @@ func generateCert() (tls.Certificate, error) {
 		SerialNumber: big.NewInt(1),
 		NotBefore:    time.Now().Add(-time.Hour),
 		NotAfter:     time.Now().Add(time.Hour),
+		DNSNames:     []string{"quictun"},
 	}
 	certDER, err := x509.CreateCertificate(rand.Reader, &template, &template, &key.PublicKey, key)
 	if err != nil {
