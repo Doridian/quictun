@@ -105,7 +105,7 @@ func runClient() error {
 	quicStream = stream
 	defer stream.Close()
 
-	sendSigcont()
+	sendReady()
 	log.Printf("Stream open!")
 	for {
 		time.Sleep(1 * time.Second)

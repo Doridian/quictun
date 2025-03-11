@@ -18,17 +18,22 @@ var useBinary = flag.String("use-binary", "", "Use a specific binary for the rem
 var localTunAddr = flag.String("local-tunnel-addr", ":1235", ":PORT for listener, otherwise connect IP:PORT")
 var remoteTunAddr = flag.String("remote-tunnel-addr", ":1235", ":PORT for listener, otherwise connect IP:PORT")
 
-var sigcontPid = flag.Int("sigcont-pid", 0, "PID to send SIGCONT to")
+var readyPidPtr = flag.Int("ready-pid", 0, "PID to send ready signal to")
+var readySignalInt = flag.Int("ready-signal", int(syscall.SIGUSR1), "Signal to send to ready-pid")
 
-func sendSigcont() {
+func sendReady() {
 	log.Printf("Ready signal")
 
-	if *sigcontPid != 0 {
-		err := syscall.Kill(*sigcontPid, syscall.SIGCONT)
-		*sigcontPid = 0
-		if err != nil {
-			log.Printf("Failed to send SIGCONT to %d: %v", *sigcontPid, err)
-		}
+	readyPid := *readyPidPtr
+	if readyPid == 0 {
+		return
+	}
+	*readyPidPtr = 0
+	readySignal := syscall.Signal(*readySignalInt)
+
+	err := syscall.Kill(readyPid, readySignal)
+	if err != nil {
+		log.Printf("Failed to send %v to %d: %v", readySignal, readyPid, err)
 	}
 }
 

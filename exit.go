@@ -31,7 +31,7 @@ func killAllBGCommands() {
 			cmd.Process.Kill())
 	}
 
-	sendSigcont()
+	sendReady()
 }
 
 func closeProgram() {
