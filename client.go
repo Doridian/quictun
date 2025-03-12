@@ -38,7 +38,7 @@ func runRemoteListener() (*exec.Cmd, error) {
 	} else {
 		sshCmd.Args = append(sshCmd.Args, *useBinary)
 	}
-	sshCmd.Args = append(sshCmd.Args, "-quic-addr", *quicAddr, "-local-tunnel-addr", *remoteTunAddr)
+	sshCmd.Args = append(sshCmd.Args, "-quic-addr", fmt.Sprintf("@%s", *quicAddr), "-local-tunnel-addr", *remoteTunAddr)
 	sshCmd.Path = sshCmd.Args[0]
 	addBGCommand(sshCmd)
 
