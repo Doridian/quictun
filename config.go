@@ -52,13 +52,13 @@ func configLoop(r io.ReadCloser, w io.WriteCloser) error {
 }
 
 func SplitAddr(addr string) (string, int, error) {
-	spl := strings.SplitN(addr, ":", 2)
-	if len(spl) != 2 {
+	pSplit := strings.LastIndex(addr, ":")
+	if pSplit == -1 {
 		return "", 0, fmt.Errorf("invalid address: %s", addr)
 	}
-	p, err := strconv.Atoi(spl[1])
+	p, err := strconv.Atoi(addr[pSplit+1:])
 	if err != nil {
 		return "", 0, err
 	}
-	return spl[0], p, nil
+	return addr[:pSplit], p, nil
 }
