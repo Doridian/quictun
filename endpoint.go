@@ -4,7 +4,6 @@ import (
 	"io"
 	"log"
 	"net"
-	"strconv"
 	"strings"
 	"time"
 
@@ -14,23 +13,20 @@ import (
 var quicStream quic.Stream
 
 func runLocalEndpoint() error {
-	if strings.HasPrefix(*localTunAddr, ":") {
+	if strings.HasPrefix(*localTunAddr, "@") {
 		return runLocalListener()
 	}
 	return runLocalDialer()
 }
 
 func runLocalListener() error {
-	port := strings.TrimPrefix(*localTunAddr, ":")
-	portInt, err := strconv.Atoi(port)
+	addr := strings.TrimPrefix(*localTunAddr, "@")
+	tcpAddr, err := net.ResolveTCPAddr("tcp", addr)
 	if err != nil {
 		return err
 	}
 
-	listener, err := net.ListenTCP("tcp", &net.TCPAddr{
-		IP:   net.IPv4(127, 0, 0, 1),
-		Port: portInt,
-	})
+	listener, err := net.ListenTCP("tcp", tcpAddr)
 	if err != nil {
 		return err
 	}

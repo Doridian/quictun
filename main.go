@@ -15,8 +15,8 @@ var quicPort = flag.Int("quic-port", 1234, "Port to connect tunnel with")
 var gitVersion = flag.Bool("git-version", false, "Use git rev-parse to send ref to remote")
 var useBinary = flag.String("use-binary", "", "Use a specific binary for the remote (instead of \"go run\")")
 
-var localTunAddr = flag.String("local-tunnel-addr", ":1235", ":PORT for listener, otherwise connect IP:PORT")
-var remoteTunAddr = flag.String("remote-tunnel-addr", ":1235", ":PORT for listener, otherwise connect IP:PORT")
+var localTunAddr = flag.String("local-tunnel-addr", "@127.0.0.1:1235", "@IP:PORT for listener, otherwise connect IP:PORT")
+var remoteTunAddr = flag.String("remote-tunnel-addr", "@127.0.0.1:1235", "@IP:PORT for listener, otherwise connect IP:PORT")
 
 var readyPidPtr = flag.Int("ready-pid", 0, "PID to send ready signal to")
 var readySignalInt = flag.Int("ready-signal", int(syscall.SIGUSR1), "Signal to send to ready-pid")
