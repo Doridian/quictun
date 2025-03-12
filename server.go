@@ -3,8 +3,6 @@ package main
 import (
 	"context"
 	"crypto/tls"
-	"fmt"
-	"net"
 	"os"
 
 	"github.com/quic-go/quic-go"
@@ -21,19 +19,19 @@ func generateServerTLSConfig() (*tls.Config, error) {
 	return tlsConfig, nil
 }
 
-func runServer() error {
+func runServer(addr string) error {
 	tlsConfig, err := generateServerTLSConfig()
 	if err != nil {
 		return err
 	}
 
-	listener, err := quic.ListenAddr(fmt.Sprintf(":%d", cfg.QUICPort), tlsConfig, nil)
+	listener, err := quic.ListenAddr(addr, tlsConfig, nil)
 	if err != nil {
 		return err
 	}
 	defer listener.Close()
 
-	cfg.QUICPort = listener.Addr().(*net.UDPAddr).Port
+	cfg.QUICAddr = listener.Addr().String()
 
 	err = configLoop(os.Stdin, os.Stdout)
 	if err != nil {

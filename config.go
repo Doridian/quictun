@@ -15,7 +15,7 @@ var remoteCfg Config
 type Config struct {
 	Certificate []byte `json:"certificate"`
 
-	QUICPort int `json:"quic_port"`
+	QUICAddr string `json:"quic_addr"`
 }
 
 func configLoop(r io.ReadCloser, w io.WriteCloser) error {

@@ -5,9 +5,9 @@ import (
 	"crypto/tls"
 	"fmt"
 	"log"
+	"net/netip"
 	"os"
 	"os/exec"
-	"strconv"
 
 	"github.com/quic-go/quic-go"
 )
@@ -38,7 +38,7 @@ func runRemoteListener() (*exec.Cmd, error) {
 	} else {
 		sshCmd.Args = append(sshCmd.Args, *useBinary)
 	}
-	sshCmd.Args = append(sshCmd.Args, "-remote-addr", ":", "-quic-port", strconv.Itoa(*quicPort), "-local-tunnel-addr", *remoteTunAddr)
+	sshCmd.Args = append(sshCmd.Args, "-quic-addr", *quicAddr, "-local-tunnel-addr", *remoteTunAddr)
 	sshCmd.Path = sshCmd.Args[0]
 	addBGCommand(sshCmd)
 
@@ -80,7 +80,7 @@ func generateClientTLSConfig() (*tls.Config, error) {
 	return tlsConfig, nil
 }
 
-func runClient() error {
+func runClient(addr string) error {
 	tlsConf, err := generateClientTLSConfig()
 	if err != nil {
 		return err
@@ -91,7 +91,13 @@ func runClient() error {
 		return err
 	}
 
-	conn, err := quic.DialAddr(context.Background(), fmt.Sprintf("[%s]:%d", *remoteAddr, remoteCfg.QUICPort), tlsConf, nil)
+	remoteAddr := remoteCfg.QUICAddr
+	remoteAddrPort, err := netip.ParseAddrPort(remoteAddr)
+	if err != nil {
+		return err
+	}
+
+	conn, err := quic.DialAddr(context.Background(), fmt.Sprintf("[%s]:%d", addr, remoteAddrPort.Port()), tlsConf, nil)
 	if err != nil {
 		return err
 	}
