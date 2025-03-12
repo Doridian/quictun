@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"io"
 	"log"
@@ -17,35 +18,32 @@ type Config struct {
 	QUICPort int `json:"quic_port"`
 }
 
-func readRemoteConfig(r io.ReadCloser) error {
+func configLoop(r io.ReadCloser, w io.WriteCloser) error {
+	defer w.Close()
 	defer r.Close()
 
-	unmarshaler := json.NewDecoder(r)
-	return unmarshaler.Decode(&remoteCfg)
-}
+	log.Println("Sending local config")
 
-func writeConfig(w io.WriteCloser) error {
-	defer w.Close()
-
-	marshaler := json.NewEncoder(w)
-	return marshaler.Encode(cfg)
-}
-
-func configLoop(r io.ReadCloser, w io.WriteCloser) error {
-	log.Println("Writing local config")
-
-	err := writeConfig(w)
+	cfgBuf := &bytes.Buffer{}
+	multiW := io.MultiWriter(w, cfgBuf)
+	marshaler := json.NewEncoder(multiW)
+	err := marshaler.Encode(cfg)
 	if err != nil {
 		return err
 	}
+	log.Printf("Local config sent: %s", cfgBuf.String())
 
 	log.Println("Waiting for remote config")
 
-	err = readRemoteConfig(r)
+	cfgBuf.Reset()
+	multiR := io.TeeReader(r, cfgBuf)
+	unmarshaler := json.NewDecoder(multiR)
+	unmarshaler.DisallowUnknownFields()
+	err = unmarshaler.Decode(&remoteCfg)
 	if err != nil {
 		return err
 	}
 
-	log.Println("Remote config received")
+	log.Printf("Remote config received: %s", cfgBuf.String())
 	return nil
 }
