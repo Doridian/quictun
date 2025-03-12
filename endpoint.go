@@ -21,12 +21,7 @@ func runLocalEndpoint() error {
 
 func runLocalListener() error {
 	addr := strings.TrimPrefix(*localTunAddr, "@")
-	tcpAddr, err := net.ResolveTCPAddr("tcp", addr)
-	if err != nil {
-		return err
-	}
-
-	listener, err := net.ListenTCP("tcp", tcpAddr)
+	listener, err := net.Listen("tcp", addr)
 	if err != nil {
 		return err
 	}
