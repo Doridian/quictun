@@ -4,9 +4,8 @@ import (
 	"context"
 	"crypto/tls"
 	"fmt"
-	"log"
+	"net"
 	"os"
-	"time"
 
 	"github.com/quic-go/quic-go"
 )
@@ -32,28 +31,25 @@ func runServer() error {
 	if err != nil {
 		return err
 	}
-	defer listener.Close()
+	cfg.QUICPort = listener.Addr().(*net.UDPAddr).Port
 
 	err = configLoop(os.Stdin, os.Stdout)
 	if err != nil {
+		_ = listener.Close()
 		return err
 	}
 
 	conn, err := listener.Accept(context.Background())
+	_ = listener.Close()
 	if err != nil {
 		return err
 	}
+	defer conn.CloseWithError(quic.ApplicationErrorCode(0), "")
 
 	stream, err := conn.AcceptStream(context.Background())
 	if err != nil {
 		return err
 	}
-	quicStream = stream
-	defer stream.Close()
 
-	sendReady()
-	log.Printf("Stream open!")
-	for {
-		time.Sleep(1 * time.Second)
-	}
+	return happyLoop(stream)
 }

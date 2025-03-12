@@ -8,7 +8,6 @@ import (
 	"os"
 	"os/exec"
 	"strconv"
-	"time"
 
 	"github.com/quic-go/quic-go"
 )
@@ -102,12 +101,6 @@ func runClient() error {
 	if err != nil {
 		return err
 	}
-	quicStream = stream
-	defer stream.Close()
 
-	sendReady()
-	log.Printf("Stream open!")
-	for {
-		time.Sleep(1 * time.Second)
-	}
+	return happyLoop(stream)
 }
