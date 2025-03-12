@@ -16,6 +16,4 @@ func happyLoop(stream quic.Stream) error {
 	for {
 		time.Sleep(1 * time.Second)
 	}
-
-	return nil
 }
