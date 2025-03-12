@@ -70,6 +70,16 @@ func runRemoteListener() (*exec.Cmd, error) {
 		return nil, err
 	}
 
+	_, remotePort, err := SplitAddr(remoteCfg.QUICAddr)
+	if err != nil {
+		return nil, err
+	}
+	localAddr, _, err := SplitAddr(cfg.QUICAddr)
+	if err != nil {
+		return nil, err
+	}
+	cfg.QUICAddr = fmt.Sprintf("[%s]:%d", localAddr, remotePort)
+
 	return sshCmd, nil
 }
 
@@ -95,16 +105,7 @@ func runClient() error {
 		return err
 	}
 
-	_, remotePort, err := SplitAddr(remoteCfg.QUICAddr)
-	if err != nil {
-		return err
-	}
-	localAddr, _, err := SplitAddr(cfg.QUICAddr)
-	if err != nil {
-		return err
-	}
-
-	conn, err := quic.DialAddr(context.Background(), fmt.Sprintf("[%s]:%d", localAddr, remotePort), tlsConf, nil)
+	conn, err := quic.DialAddr(context.Background(), cfg.QUICAddr, tlsConf, nil)
 	if err != nil {
 		return err
 	}
