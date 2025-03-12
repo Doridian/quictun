@@ -78,7 +78,7 @@ func runRemoteListener() (*exec.Cmd, error) {
 	if err != nil {
 		return nil, err
 	}
-	cfg.QUICAddr = fmt.Sprintf("[%s]:%d", localAddr, remotePort)
+	cfg.QUICAddr = fmt.Sprintf("%s:%d", localAddr, remotePort)
 
 	return sshCmd, nil
 }
