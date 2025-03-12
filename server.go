@@ -19,13 +19,13 @@ func generateServerTLSConfig() (*tls.Config, error) {
 	return tlsConfig, nil
 }
 
-func runServer(addr string) error {
+func runServer() error {
 	tlsConfig, err := generateServerTLSConfig()
 	if err != nil {
 		return err
 	}
 
-	listener, err := quic.ListenAddr(addr, tlsConfig, nil)
+	listener, err := quic.ListenAddr(cfg.QUICAddr, tlsConfig, nil)
 	if err != nil {
 		return err
 	}

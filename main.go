@@ -10,7 +10,6 @@ import (
 	"syscall"
 )
 
-var remoteAddr = flag.String("remote-addr", "remote.example.com", "Remote to open tunnel with")
 var quicAddr = flag.String("quic-addr", ":0", "@IP:PORT for listener, otherwise connect IP:PORT")
 var gitVersion = flag.Bool("git-version", false, "Use git rev-parse to send ref to remote")
 var useBinary = flag.String("use-binary", "", "Use a specific binary for the remote (instead of \"go run\")")
@@ -40,8 +39,11 @@ func sendReady() {
 func main() {
 	flag.Parse()
 
-	if *remoteAddr == ":" {
+	cfg.QUICAddr = *quicAddr
+	isServer := cfg.QUICAddr[0] == '@'
+	if isServer {
 		log.SetPrefix("server: ")
+		cfg.QUICAddr = cfg.QUICAddr[1:]
 	} else {
 		log.SetPrefix("client: ")
 	}
@@ -72,17 +74,15 @@ func main() {
 
 	log.Printf("Used version: %s", VERSION)
 
-	cfg.QUICAddr = *quicAddr
-
 	err := runLocalEndpoint()
 	if err != nil {
 		fatalProgram(err)
 	}
 
-	if strings.HasPrefix(*remoteAddr, "@") {
-		err = runServer(strings.TrimPrefix(*remoteAddr, "@"))
+	if isServer {
+		err = runServer()
 	} else {
-		err = runClient(*remoteAddr)
+		err = runClient()
 	}
 	log.Println("main done")
 	if err != nil {

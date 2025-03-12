@@ -3,8 +3,11 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
+	"strconv"
+	"strings"
 )
 
 var VERSION = "main"
@@ -46,4 +49,16 @@ func configLoop(r io.ReadCloser, w io.WriteCloser) error {
 
 	log.Printf("Remote config received: %s", cfgBuf.String())
 	return nil
+}
+
+func SplitAddr(addr string) (string, int, error) {
+	spl := strings.SplitN(addr, ":", 2)
+	if len(spl) != 2 {
+		return "", 0, fmt.Errorf("invalid address: %s", addr)
+	}
+	p, err := strconv.Atoi(spl[1])
+	if err != nil {
+		return "", 0, err
+	}
+	return spl[0], p, nil
 }
