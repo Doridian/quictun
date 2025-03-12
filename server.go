@@ -51,5 +51,6 @@ func runServer() error {
 		return err
 	}
 
-	return happyLoop(stream)
+	happyLoop(stream)
+	return nil
 }
