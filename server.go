@@ -31,6 +31,8 @@ func runServer() error {
 	if err != nil {
 		return err
 	}
+	defer listener.Close()
+
 	cfg.QUICPort = listener.Addr().(*net.UDPAddr).Port
 
 	err = configLoop(os.Stdin, os.Stdout)
@@ -40,7 +42,6 @@ func runServer() error {
 	}
 
 	conn, err := listener.Accept(context.Background())
-	_ = listener.Close()
 	if err != nil {
 		return err
 	}
@@ -51,6 +52,5 @@ func runServer() error {
 		return err
 	}
 
-	happyLoop(stream)
-	return nil
+	return happyLoop(stream)
 }

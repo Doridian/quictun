@@ -102,6 +102,5 @@ func runClient() error {
 		return err
 	}
 
-	happyLoop(stream)
-	return nil
+	return happyLoop(stream)
 }

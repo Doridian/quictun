@@ -7,7 +7,7 @@ import (
 	"github.com/quic-go/quic-go"
 )
 
-func happyLoop(stream quic.Stream) {
+func happyLoop(stream quic.Stream) error {
 	defer stream.Close()
 	quicStream = stream
 
@@ -16,4 +16,6 @@ func happyLoop(stream quic.Stream) {
 	for {
 		time.Sleep(1 * time.Second)
 	}
+
+	return nil
 }
